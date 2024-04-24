@@ -1,0 +1,34 @@
+{
+  "BuyInsurance": {
+    "Buy insurance": "Buy insurance",
+    "Check your price": "Check your price",
+    "Contents": "Contents insurance",
+    "discount-info": "If you have contents insurance, you get a 50% discount on mobile insurance purchased in the app!",
+    "discount": "Discount",
+    "Get a discount": "Get a discount",
+    "get-updated": "Get updated",
+    "Our next product": "Our next product",
+    "pet-insurance-info": "Get help quickly from local clinics with Tillit Pet Insurance.",
+    "pet-insurance-intro": "We love our furry friends, and work really hard to create the world's best pet insurance. The cost of caring for your pet should never be a concern.",
+    "pet-insurance-is-coming": "Pet Insurance (coming soon)",
+    "Pet": "Pet insurance",
+    "Phone": "Phone insurance",
+    "See more": "See more",
+    "Your email": "Your email"
+  },
+  "Breadcrumbs": {
+    "Overview": "Overview",
+    "claim": "Claim",
+    "insurance": "Insurance"
+  },
+  "ChargeModal": {
+    "amount-refunded": "Amount refunded",
+    "amount": "Amount",
+    "close": "Close",
+    "payment-date": "Payment date",
+    "payment-details": "Payment details",
+    "period": "Period",
+    "see-insurance-certificate": "See insurance certificate",
+    "status": "Status"
+  }
+}

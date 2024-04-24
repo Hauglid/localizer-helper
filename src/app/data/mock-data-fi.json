@@ -1,0 +1,58 @@
+{
+  "BuyInsurance": {
+    "Buy insurance": "Osta vakuutus",
+    "Check your price": "Tarkista hintasi",
+    "Contents": "Kotivakuutus",
+    "discount-info": "Jos sinulla on kotivakuutus, saat 50% alennuksen matkapuhelinvakuutuksesta ostaessasi sen sovelluksessa!",
+    "discount": "Alennus",
+    "Get a discount": "Saa alennusta",
+    "get-updated": "Pysy ajan tasalla",
+    "Our next product": "Seuraava tuotteemme",
+    "pet-insurance-info": "Tillitin Lemmikkivakuutuksella saat apua nopeasti paikallisilta klinikoilta.",
+    "pet-insurance-intro": "Rakastamme karvaisia ystäviämme ja teemme kaikkemme voidaksemme tarjota maailman parhaan lemmikkivakuutuksen. Lemmikkisi terveyteen liittyvien kustannusten ei koskaan tulisi olla sinun huolenaiheesi.",
+    "pet-insurance-is-coming": "Lemmikkivakuutus (tulossa pian)",
+    "Pet": "Lemmikkivakuutus",
+    "Phone": "Matkapuhelinvakuutus",
+    "See more": "Näytä lisää",
+    "Your email": "Sähköpostiosoitteesi"
+  },
+  "Breadcrumbs": {
+    "Overview": "Yleiskatsaus",
+    "claim": "Vahinkoilmoitus",
+    "insurance": "Vakuutus"
+  },
+  "ChargeModal": {
+    "amount-refunded": "Palautettu summa",
+    "amount": "Summa",
+    "close": "Sulje",
+    "payment-date": "Maksupäivä",
+    "payment-details": "Maksutiedot",
+    "period": "Jakso",
+    "see-insurance-certificate": "Näytä vakuutustodistus",
+    "status": "Tila"
+  },
+  "ContentsPage": {
+    "address": "Osoite",
+    "Contents insurance": "Kotivakuutus",
+    "coverages": "Sinulla on seuraavat vakuutukset",
+    "decreasing-deductible": "Pienenevä omavastuu",
+    "dynamic-price": "Joustava hinta",
+    "fixed-price": "Kiinteä hinta",
+    "other-deductibles": "Muut vähennykset",
+    "payment-overview": "Maksun yhteenveto",
+    "report-claim": "Ilmoita vahingosta",
+    "sum-insured": "Vakuutussumma",
+    "Bike": "Polkupyörävarkaus",
+    "Bike text": "Jos joku varastaa polkupyöräsi, saat korvauksen enintään 20000 NOK.",
+    "Fire": "Tulipalo",
+    "Fire text": "Jos kotiisi syttyy tulipalo, korvaamme vahingoittuneet tavarat. Jos kotisi ei ole asuttavissa, huolehdimme, että sinulla on väliaikainen asunto.",
+    "Nature": "Luonto",
+    "Nature text": "Jos kotisi joutuu maanvyörymän, myrskyn, tulvan, maanjäristyksen tai tulivuorenpurkauksen kohteeksi, korvaamme vahingoittuneet tavarat. Jos kotisi ei ole asuttavissa, huolehdimme, että sinulla on väliaikainen asunto.",
+    "Water": "Vesivahinko",
+    "Water text": "Korvaamme tavarasi, jos ne ovat vahingoittuneet vesivuodon tai tulvan vuoksi. Jos kotisi ei ole asuttavissa, huolehdimme, että sinulla on väliaikainen asunto.",
+    "Theft": "Varkaus",
+    "Theft text": "Oletko joutunut varkauden ja ilkivallan uhriksi? Tillit korvaa varastetut tai vahingoittuneet tavarat, kuten jos joku murtautuu varastotilaasi. Jos kotisi ei ole asuttavissa, huolehdimme, että sinulla on väliaikainen asunto.",
+    "Other": "Muu",
+    "Other text": "Tillitin mukana saat kotivakuutuksen, joka kattaa kaiken, mitä tyypillisesti kattaa tavallinen kotivakuutus. Esitämme sinulle yksinkertaistetun version, mutta aina sovelletaan täydellisiä ehtoja ja ehtoja."
+  }
+}

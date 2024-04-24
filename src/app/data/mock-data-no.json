@@ -15,6 +15,12 @@
     "Pet": "Kjæledyrforsikring",
     "Phone": "Mobilforsikring",
     "See more": "Se mer",
-    "Your email": "Din e-post"
+    "Your email": "Din e-post",
+    "Nested": {
+      "Test": "Test",
+      "TripleNested": {
+        "Test": "Test"
+      }
+    }
   }
 }
