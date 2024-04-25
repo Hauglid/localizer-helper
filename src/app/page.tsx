@@ -3,7 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { flattenJson, sortStrings } from "@/lib/utils";
+import { readFiles, sortStrings } from "@/lib/utils";
 import { Upload } from "lucide-react";
 import { useState, type ChangeEvent } from "react";
 
@@ -14,47 +14,24 @@ export default function HomePage() {
   >({});
 
   async function filePickerOnChange(event: ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(event.target.files ?? []).map((file) => {
-      // Define a new file reader
-      const reader = new FileReader();
+    const resultFromFiles = await readFiles(
+      Array.from(event.target.files ?? []),
+    );
 
-      // Create a new promise
-      return new Promise((resolve) => {
-        // Resolve the promise after reading file
-        reader.onload = () => {
-          const locale = file.name.split(".")[0]!;
-
-          const content = reader.result as string;
-          const json = JSON.parse(content) as Record<string, unknown>;
-          const flattenedJson = flattenJson(json);
-          const keys = Object.keys(flattenedJson);
-          return resolve([keys, { [locale]: flattenedJson }]);
-        };
-
-        // Read the file as a text
-        reader.readAsText(file);
-      });
-    });
-
-    // At this point you'll have an array of results
-    const resultFromFiles = (await Promise.all(files)) as [
-      string[],
-      Record<string, Record<string, string>>,
-    ][];
     // Extract keys from the results
-    setKeys(
-      new Set(
-        resultFromFiles
-          .map(([keys]) => keys)
-          .reduce((acc, curr) => [...acc, ...curr], [])
-          .sort(sortStrings),
-      ),
-    );
-    setTranslations(
-      resultFromFiles
-        .map(([, translations]) => translations)
-        .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
-    );
+    const newKeySet = resultFromFiles
+      .flatMap(([keys]) => keys)
+      .sort(sortStrings);
+
+    const newTranslations = resultFromFiles
+      .map(([, translations]) => translations)
+      .reduce((acc, curr) => ({ ...acc, ...curr }), {});
+
+    setKeys((keys) => new Set([...keys, ...newKeySet]));
+    setTranslations((translations) => ({
+      ...translations,
+      ...newTranslations,
+    }));
   }
 
   return (
