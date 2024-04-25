@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { readFiles, sortStrings, unFlattenJson } from "@/lib/utils";
+import { cn, readFiles, sortStrings, unFlattenJson } from "@/lib/utils";
 import { Download, Upload } from "lucide-react";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 
@@ -52,7 +52,6 @@ export default function HomePage() {
     const a = document.createElement("a");
     a.href = url;
     a.download = `${filename}.json`;
-    console.log({ blob });
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -137,12 +136,16 @@ export default function HomePage() {
               />
 
               {Object.keys(translations).map((locale) => {
+                const value = translations?.[locale]?.[key];
                 return (
                   <Textarea
                     key={`${key}-${locale}`}
-                    className="min-h-0 flex-[2]"
+                    className={cn(
+                      "min-h-0 flex-[2]",
+                      value ? "" : "border-2 border-red-500",
+                    )}
                     rows={1}
-                    value={translations?.[locale]?.[key] ?? ""}
+                    value={value ?? ""}
                     onChange={(e) => {
                       const newTranslations = { ...translations };
                       newTranslations[locale]![key] = e.target.value;
