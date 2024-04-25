@@ -21,6 +21,22 @@ export function flattenJson(
   }, {});
 }
 
+export function unFlattenJson(json: Record<string, string>) {
+  return Object.entries(json).reduce(
+    (acc, [key, value]) => {
+      const keys = key.split(".");
+      const lastKey = keys.pop()!;
+      return (keys.reduce((acc, k) => {
+        if (!acc[k]) {
+          acc[k] = {};
+        }
+        return acc[k];
+      }, acc)[lastKey] = value);
+    },
+    {} as Record<string, string>,
+  );
+}
+
 export function sortStrings(a: string, b: string) {
   return a.localeCompare(b);
 }

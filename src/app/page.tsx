@@ -3,28 +3,62 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { sortStrings } from "@/lib/utils";
-import { Upload, X } from "lucide-react";
+import { flattenJson, sortStrings } from "@/lib/utils";
+import { Upload } from "lucide-react";
 import { useState, type ChangeEvent } from "react";
 
 export default function HomePage() {
-  const keys = Object.keys(data).sort(sortStrings);
-  const [files, setFiles] = useState<File[]>([]);
-  const [locales, setLocales] = useState<string[]>([]);
+  const [keys, setKeys] = useState<Set<string>>(new Set());
+  const [translations, setTranslations] = useState<
+    Record<string, Record<string, string>>
+  >({});
 
-  function filePickerOnChange(event: ChangeEvent<HTMLInputElement>) {
-    const newFiles = Array.from(event.target.files ?? []);
+  async function filePickerOnChange(event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []).map((file) => {
+      // Define a new file reader
+      const reader = new FileReader();
 
-    const newLocales = newFiles
-      .map((file) => file.name.split(".")[0] ?? "")
-      .filter((locale) => locale !== "");
+      // Create a new promise
+      return new Promise((resolve) => {
+        // Resolve the promise after reading file
+        reader.onload = () => {
+          const locale = file.name.split(".")[0]!;
 
-    setLocales([...locales, ...newLocales]);
-    setFiles([...files, ...newFiles]);
+          const content = reader.result as string;
+          const json = JSON.parse(content) as Record<string, unknown>;
+          const flattenedJson = flattenJson(json);
+          const keys = Object.keys(flattenedJson);
+          return resolve([keys, { [locale]: flattenedJson }]);
+        };
+
+        // Read the file as a text
+        reader.readAsText(file);
+      });
+    });
+
+    // At this point you'll have an array of results
+    const resultFromFiles = (await Promise.all(files)) as [
+      string[],
+      Record<string, Record<string, string>>,
+    ][];
+    // Extract keys from the results
+    setKeys(
+      new Set(
+        resultFromFiles
+          .map(([keys]) => keys)
+          .reduce((acc, curr) => [...acc, ...curr], [])
+          .sort(sortStrings),
+      ),
+    );
+    setTranslations(
+      resultFromFiles
+        .map(([, translations]) => translations)
+        .reduce((acc, curr) => ({ ...acc, ...curr }), {}),
+    );
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center ">
+    <main className="flex min-h-screen flex-col items-center justify-start ">
       <div className="flex w-full flex-col gap-10 p-10">
         {/* Add file section */}
         <div>
@@ -43,35 +77,18 @@ export default function HomePage() {
             onChange={filePickerOnChange}
           />
         </div>
-        <div className="flex w-fit flex-col">
-          <div>Files:</div>
-          {files.map((file) => (
-            <div
-              className="flex min-w-48 flex-row justify-between border p-2"
-              key={`file - ${file.name}`}
-            >
-              <div>{file.name}</div>
-              <X
-                size={24}
-                onClick={() =>
-                  setFiles(files.filter((f) => f.name !== file.name))
-                }
-              />
-            </div>
-          ))}
-        </div>
         <div className="flex w-full flex-col gap-4">
           <div className="flex flex-row gap-4 ">
             <div className="flex-1 pl-4">
               <Label className="border-b border-black">Key</Label>
             </div>
-            {files.map((file) => (
-              <div key={file.name} className="flex-[2] pl-4">
-                <Label className="border-b border-black">{file.name}</Label>
+            {Object.keys(translations).map((locale) => (
+              <div key={locale} className="flex-[2] pl-4">
+                <Label className="border-b border-black">{locale}</Label>
               </div>
             ))}
           </div>
-          {keys.map((key) => (
+          {[...keys].map((key) => (
             <div key={key} className="flex flex-row gap-4 border-b  pb-4">
               <Textarea
                 className="min-h-0 flex-1"
@@ -80,18 +97,22 @@ export default function HomePage() {
                 readOnly
                 value={key}
               />
-              {Object.entries(data[key] as Record<string, string>).map(
-                ([locale, value]) => (
+
+              {Object.keys(translations).map((locale) => {
+                return (
                   <Textarea
                     key={`${key}-${locale}`}
                     className="min-h-0 flex-[2]"
-                    rows={2}
-                    id={locale}
-                    readOnly
-                    value={value}
+                    rows={1}
+                    value={translations?.[locale]?.[key] ?? ""}
+                    onChange={(e) => {
+                      const newTranslations = { ...translations };
+                      newTranslations[locale]![key] = e.target.value;
+                      setTranslations(newTranslations);
+                    }}
                   />
-                ),
-              )}
+                );
+              })}
             </div>
           ))}
         </div>
@@ -100,20 +121,20 @@ export default function HomePage() {
   );
 }
 
-const data = {
-  discount: {
-    no: "Rabatt",
-    en: "Discount",
-    fi: "Alennus",
-  },
-  total: {
-    no: "Totalt",
-    en: "Total",
-    fi: "Yhteensä",
-  },
-  subtotal: {
-    no: "Delsum",
-    en: "Subtotal",
-    fi: "Välisumma",
-  },
-};
+// const data = {
+//   en: {
+//     discount: "Discount",
+//     total: "Total",
+//     subtotal: "Subtotal",
+//   },
+//   fi: {
+//     discount: "Alennus",
+//     total: "Yhteensä",
+//     subtotal: "Välisumma",
+//   },
+//   no: {
+//     discount: "Rabatt",
+//     total: "Totalt",
+//     subtotal: "Delsum",
+//   },
+// };
