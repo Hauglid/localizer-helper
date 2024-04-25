@@ -21,14 +21,17 @@ export function flattenJson(
   }, {});
 }
 
-export function unFlattenJson(data: Record<string, unknown>) {
+export function unFlattenJson(
+  keys: Set<string>,
+  data: Record<string, unknown>,
+) {
   const result: Record<string, unknown> = {};
 
-  for (const basekey in data) {
+  for (const basekey of keys.values()) {
     const keys = basekey.split(".");
     keys.reduce((res, key, i) => {
       return (res[key] =
-        keys.length === i + 1 ? data[basekey] : res[key] || {});
+        keys.length === i + 1 ? data[basekey] ?? "" : res[key] || {});
     }, result);
   }
 

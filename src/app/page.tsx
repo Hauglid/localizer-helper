@@ -39,8 +39,12 @@ export default function HomePage() {
     setKeys((keys) => new Set([...keys, ...newKeys].sort(sortStrings)));
   }
 
-  function JSONToFile(obj: Record<string, string>, filename: string) {
-    const expandedJson = unFlattenJson(obj);
+  function JSONToFile(
+    keys: Set<string>,
+    data: Record<string, string>,
+    filename: string,
+  ) {
+    const expandedJson = unFlattenJson(keys, data);
     const blob = new Blob([JSON.stringify(expandedJson, null, 2)], {
       type: "application/json",
     });
@@ -55,7 +59,7 @@ export default function HomePage() {
 
   function exportFiles() {
     Object.entries(translations).forEach(([locale, translation]) => {
-      JSONToFile(translation, locale);
+      JSONToFile(keys, translation, locale);
     });
   }
 
