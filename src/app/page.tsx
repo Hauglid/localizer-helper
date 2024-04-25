@@ -1,11 +1,12 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { readFiles, sortStrings } from "@/lib/utils";
-import { Upload } from "lucide-react";
-import { useState, type ChangeEvent } from "react";
+import { readFiles, sortStrings, unFlattenJson } from "@/lib/utils";
+import { Download, Upload } from "lucide-react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 
 export default function HomePage() {
   const [keys, setKeys] = useState<Set<string>>(new Set());
@@ -27,32 +28,89 @@ export default function HomePage() {
       .map(([, translations]) => translations)
       .reduce((acc, curr) => ({ ...acc, ...curr }), {});
 
-    setKeys((keys) => new Set([...keys, ...newKeySet]));
+    addkeys(newKeySet);
     setTranslations((translations) => ({
       ...translations,
       ...newTranslations,
     }));
   }
 
+  function addkeys(newKeys: string[]) {
+    setKeys((keys) => new Set([...keys, ...newKeys].sort(sortStrings)));
+  }
+
+  function JSONToFile(obj: Record<string, string>, filename: string) {
+    const expandedJson = unFlattenJson(obj);
+    const blob = new Blob([JSON.stringify(expandedJson, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${filename}.json`;
+    console.log({ blob });
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function exportFiles() {
+    Object.entries(translations).forEach(([locale, translation]) => {
+      JSONToFile(translation, locale);
+    });
+  }
+
+  function onSubmitKey(event: FormEvent<HTMLFormElement>) {
+    const key = event.target[0].value;
+    if (key === "") return;
+    addkeys([key]);
+    event.target[0].value = "";
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-start ">
       <div className="flex w-full flex-col gap-10 p-10">
         {/* Add file section */}
+        <div className="flex flex-row gap-10">
+          <div>
+            <Label
+              className="flex w-fit flex-row items-center gap-4 border p-2"
+              htmlFor="file"
+            >
+              <div>Add new locale file</div>
+              <Upload size={24} />
+            </Label>
+            <Input
+              id="file"
+              multiple
+              defaultValue={""}
+              type="file"
+              className="hidden"
+              onChange={filePickerOnChange}
+            />
+          </div>
+          <div>
+            <Button
+              variant={"secondary"}
+              className="flex w-fit flex-row items-center gap-4 border p-2"
+              onClick={exportFiles}
+            >
+              <div>Export files</div>
+              <Download size={24} />
+            </Button>
+          </div>
+        </div>
         <div>
-          <Label
-            className="flex w-fit flex-row items-center gap-4 border p-2"
-            htmlFor="file"
+          Add new key
+          <form
+            className="flex flex-row gap-4"
+            onSubmit={(event) => {
+              event.preventDefault();
+              onSubmitKey(event);
+            }}
           >
-            <div>Add new locale file</div>
-            <Upload size={24} />
-          </Label>
-          <Input
-            id="file"
-            multiple
-            type="file"
-            className="hidden"
-            onChange={filePickerOnChange}
-          />
+            <Input className="w-fit min-w-48 border-b border-black" />
+            <Button>Add key</Button>
+          </form>
         </div>
         <div className="flex w-full flex-col gap-4">
           <div className="flex flex-row gap-4 ">
