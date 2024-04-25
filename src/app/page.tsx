@@ -84,7 +84,6 @@ export default function HomePage() {
               multiple
               defaultValue={""}
               type="file"
-              className="hidden"
               onChange={filePickerOnChange}
             />
           </div>
