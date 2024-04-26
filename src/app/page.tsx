@@ -1,5 +1,6 @@
 "use client";
 
+import { AddKeyForm } from "@/components/add-key-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -62,13 +63,6 @@ export default function HomePage() {
     });
   }
 
-  function onSubmitKey(event: FormEvent<HTMLFormElement>) {
-    const key = event.target[0].value;
-    if (key === "") return;
-    addkeys([key]);
-    event.target[0].value = "";
-  }
-
   return (
     <main className="flex min-h-screen flex-col items-center justify-start ">
       <div className="flex w-full flex-col gap-10 p-10">
@@ -101,19 +95,7 @@ export default function HomePage() {
             </Button>
           </div>
         </div>
-        <div>
-          Add new key
-          <form
-            className="flex flex-row gap-4"
-            onSubmit={(event) => {
-              event.preventDefault();
-              onSubmitKey(event);
-            }}
-          >
-            <Input className="w-fit min-w-48 border-b border-black" />
-            <Button>Add key</Button>
-          </form>
-        </div>
+        <AddKeyForm callback={addkeys} />
         <div className="flex w-full flex-col gap-4">
           <div className="flex flex-row gap-4 ">
             <div className="flex-1 pl-4">
