@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn, readFiles, sortStrings, unFlattenJson } from "@/lib/utils";
-import { Download, Upload } from "lucide-react";
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { Download, Upload, X } from "lucide-react";
+import { useState, type ChangeEvent } from "react";
 
 export default function HomePage() {
   const [keys, setKeys] = useState<Set<string>>(new Set());
@@ -108,12 +108,22 @@ export default function HomePage() {
             ))}
           </div>
           {[...keys].map((key) => (
-            <div key={key} className="flex flex-row gap-4 border-b  pb-4">
+            <div
+              key={key}
+              className="flex flex-row items-center gap-4 border-b  pb-4"
+            >
+              <X
+                className="cursor-pointer"
+                onClick={() => {
+                  const newKeys = new Set(keys);
+                  newKeys.delete(key);
+                  setKeys(newKeys);
+                }}
+              />
               <Textarea
                 className="min-h-0 flex-1"
-                rows={2}
+                rows={1}
                 id={key}
-                readOnly
                 value={key}
               />
 
