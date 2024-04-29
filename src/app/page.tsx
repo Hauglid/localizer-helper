@@ -19,19 +19,15 @@ export default function HomePage() {
   async function filePickerOnChange(event: ChangeEvent<HTMLInputElement>) {
     try {
       const files = Array.from(event.target.files ?? []);
+
       let resultFromFiles: [
         string[],
         Record<string, Record<string, string>>,
       ][] = [];
 
-      readFiles(files)
-        .then((result) => {
-          resultFromFiles = result;
-        })
-        .catch((error) => {
-          console.error(error);
-          toast.error("Error reading files");
-        });
+      await readFiles(files).then((result) => {
+        resultFromFiles = result;
+      });
 
       // Extract keys from the results
       const newKeySet = resultFromFiles
@@ -101,6 +97,7 @@ export default function HomePage() {
               onChange={filePickerOnChange}
             />
           </div>
+
           <div>
             <Button
               variant={"secondary"}
