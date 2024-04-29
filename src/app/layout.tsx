@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/sonner";
 import "@/styles/globals.css";
 
 import { Inter } from "next/font/google";
@@ -21,6 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${inter.variable}`}>{children}</body>
+      <Toaster />
     </html>
   );
 }
