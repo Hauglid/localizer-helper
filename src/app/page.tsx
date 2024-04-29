@@ -8,7 +8,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn, readFiles, sortStrings, unFlattenJson } from "@/lib/utils";
 import { Download, Upload, X } from "lucide-react";
 import { useState, type ChangeEvent } from "react";
-import { toast } from "sonner";
 
 export default function HomePage() {
   const [keys, setKeys] = useState<Set<string>>(new Set());
@@ -17,36 +16,30 @@ export default function HomePage() {
   >({});
 
   async function filePickerOnChange(event: ChangeEvent<HTMLInputElement>) {
-    try {
-      const files = Array.from(event.target.files ?? []);
+    const files = Array.from(event.target.files ?? []);
 
-      let resultFromFiles: [
-        string[],
-        Record<string, Record<string, string>>,
-      ][] = [];
+    const resultFromFiles = await readFiles(files);
 
-      await readFiles(files).then((result) => {
-        resultFromFiles = result;
-      });
+    // Extract keys from the results
+    const newKeySet = resultFromFiles
+      .flatMap(([keys]) => keys)
+      .sort(sortStrings);
 
-      // Extract keys from the results
-      const newKeySet = resultFromFiles
-        .flatMap(([keys]) => keys)
-        .sort(sortStrings);
+    const newTranslations = resultFromFiles
+      .map(([, translations]) => translations)
+      .reduce((acc, curr) => ({ ...acc, ...curr }), {});
 
-      const newTranslations = resultFromFiles
-        .map(([, translations]) => translations)
-        .reduce((acc, curr) => ({ ...acc, ...curr }), {});
+    addkeys(newKeySet);
+    addTranslations(newTranslations);
+  }
 
-      addkeys(newKeySet);
-      setTranslations((translations) => ({
-        ...translations,
-        ...newTranslations,
-      }));
-    } catch (error) {
-      console.error(error);
-      toast.error("Error reading files");
-    }
+  function addTranslations(
+    newTranslations: Record<string, Record<string, string>>,
+  ) {
+    setTranslations((translations) => ({
+      ...translations,
+      ...newTranslations,
+    }));
   }
 
   function addkeys(newKeys: string[]) {
@@ -97,7 +90,6 @@ export default function HomePage() {
               onChange={filePickerOnChange}
             />
           </div>
-
           <div>
             <Button
               variant={"secondary"}

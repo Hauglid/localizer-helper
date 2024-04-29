@@ -22,21 +22,37 @@ export function flattenJson(
   }, {});
 }
 
+// Function to unflatten a flattened JSON object
 export function unFlattenJson(
-  keys: Set<string>,
-  data: Record<string, unknown>,
+  keys: Set<string>, // Set of keys representing the flattened structure
+  data: Record<string, unknown>, // Flattened JSON data
 ) {
+  // Initialize the result object
   const result: Record<string, unknown> = {};
 
-  for (const basekey of keys.values()) {
-    const keys = basekey.split(".");
-    keys.reduce((res, key, i) => {
-      return (res[key] =
-        keys.length === i + 1 ? data[basekey] ?? "" : res[key] || {});
-    }, result);
+  // Iterate through each key
+  for (const basekey of keys) {
+    // Start with the result object
+    let currentObj: Record<string, unknown> = result;
+    // Split the key by dot to get nested keys
+    const keyArr = basekey.split(".");
+
+    // Iterate through each nested key
+    for (const key of keyArr) {
+      // If it's the last key
+      // Assign the value from the flattened data
+      if (key === keyArr[keyArr.length - 1]) {
+        currentObj[key] = data[basekey] ?? "";
+      } else {
+        // Create an empty object if the key doesn't exist
+        currentObj[key] = currentObj[key] || {};
+        // Move to the next nested object
+        currentObj = currentObj[key] as Record<string, unknown>;
+      }
+    }
   }
 
-  return result;
+  return result; // Return the unflattened JSON object
 }
 
 export function sortStrings(a: string, b: string) {
