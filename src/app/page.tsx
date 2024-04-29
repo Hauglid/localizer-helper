@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn, readFiles, sortStrings, unFlattenJson } from "@/lib/utils";
 import { Download, Upload, X } from "lucide-react";
 import { useState, type ChangeEvent } from "react";
+import { toast } from "sonner";
 
 export default function HomePage() {
   const [keys, setKeys] = useState<Set<string>>(new Set());
@@ -16,24 +17,40 @@ export default function HomePage() {
   >({});
 
   async function filePickerOnChange(event: ChangeEvent<HTMLInputElement>) {
-    const resultFromFiles = await readFiles(
-      Array.from(event.target.files ?? []),
-    );
+    try {
+      const files = Array.from(event.target.files ?? []);
+      let resultFromFiles: [
+        string[],
+        Record<string, Record<string, string>>,
+      ][] = [];
 
-    // Extract keys from the results
-    const newKeySet = resultFromFiles
-      .flatMap(([keys]) => keys)
-      .sort(sortStrings);
+      readFiles(files)
+        .then((result) => {
+          resultFromFiles = result;
+        })
+        .catch((error) => {
+          console.error(error);
+          toast.error("Error reading files");
+        });
 
-    const newTranslations = resultFromFiles
-      .map(([, translations]) => translations)
-      .reduce((acc, curr) => ({ ...acc, ...curr }), {});
+      // Extract keys from the results
+      const newKeySet = resultFromFiles
+        .flatMap(([keys]) => keys)
+        .sort(sortStrings);
 
-    addkeys(newKeySet);
-    setTranslations((translations) => ({
-      ...translations,
-      ...newTranslations,
-    }));
+      const newTranslations = resultFromFiles
+        .map(([, translations]) => translations)
+        .reduce((acc, curr) => ({ ...acc, ...curr }), {});
+
+      addkeys(newKeySet);
+      setTranslations((translations) => ({
+        ...translations,
+        ...newTranslations,
+      }));
+    } catch (error) {
+      console.error(error);
+      toast.error("Error reading files");
+    }
   }
 
   function addkeys(newKeys: string[]) {
