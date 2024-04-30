@@ -85,7 +85,6 @@ export default function HomePage() {
             <Input
               id="file"
               multiple
-              defaultValue={""}
               type="file"
               onChange={filePickerOnChange}
             />
@@ -127,10 +126,11 @@ export default function HomePage() {
                 }}
               />
               <Textarea
-                className="min-h-0 flex-1"
+                className="min-h-0 min-w-56 flex-1"
                 rows={1}
                 id={key}
                 value={key}
+                readOnly
               />
 
               {Object.keys(translations).map((locale) => {
@@ -139,7 +139,7 @@ export default function HomePage() {
                   <Textarea
                     key={`${key}-${locale}`}
                     className={cn(
-                      "min-h-0 flex-[2]",
+                      "min-h-0 min-w-56 flex-[2]",
                       value ? "" : "border-2 border-red-500",
                     )}
                     rows={1}
