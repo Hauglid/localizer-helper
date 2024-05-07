@@ -1,15 +1,19 @@
 "use client";
 
 import { AddKeyForm } from "@/components/add-key-form";
+import { Filters } from "@/components/filters";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn, readFiles, sortStrings, unFlattenJson } from "@/lib/utils";
-import { Download, Upload, X } from "lucide-react";
+import { Download, X } from "lucide-react";
 import { useState, type ChangeEvent } from "react";
+import { toast } from "sonner";
 
 export default function HomePage() {
+  const [onlyMissingValues, setOnlyMissingValues] = useState(false);
+
   const [keys, setKeys] = useState<Set<string>>(new Set());
   const [translations, setTranslations] = useState<
     Record<string, Record<string, string>>
@@ -48,10 +52,10 @@ export default function HomePage() {
 
   function JSONToFile(
     keys: Set<string>,
-    data: Record<string, string>,
+    translations: Record<string, string>,
     filename: string,
   ) {
-    const expandedJson = unFlattenJson(keys, data);
+    const expandedJson = unFlattenJson(keys, translations);
     const blob = new Blob([JSON.stringify(expandedJson, null, 2)], {
       type: "application/json",
     });
@@ -64,6 +68,11 @@ export default function HomePage() {
   }
 
   function exportFiles() {
+    if (Object.keys(translations).length === 0) {
+      toast.error("No translations to export");
+      return;
+    }
+
     Object.entries(translations).forEach(([locale, translation]) => {
       JSONToFile(keys, translation, locale);
     });
@@ -73,15 +82,8 @@ export default function HomePage() {
     <main className="flex min-h-screen flex-col items-center justify-start ">
       <div className="flex w-full flex-col gap-10 p-10">
         {/* Add file section */}
-        <div className="flex flex-row gap-10">
+        <div className="flex flex-row justify-between gap-10">
           <div>
-            <Label
-              className="flex w-fit flex-row items-center gap-4 border p-2"
-              htmlFor="file"
-            >
-              <div>Add new locale file</div>
-              <Upload size={24} />
-            </Label>
             <Input
               id="file"
               multiple
@@ -100,60 +102,84 @@ export default function HomePage() {
             </Button>
           </div>
         </div>
-        <AddKeyForm callback={addkeys} />
+        <div className="flex flex-row gap-10">
+          <AddKeyForm callback={addkeys} />
+          <Filters callback={setOnlyMissingValues} />
+        </div>
         <div className="flex w-full flex-col gap-4">
+          {/* Header */}
           <div className="flex flex-row gap-4 ">
-            <div className="flex-1 pl-4">
+            <div className="min-w-56 flex-1 ">
               <Label className="border-b border-black">Key</Label>
             </div>
             {Object.keys(translations).map((locale) => (
-              <div key={locale} className="flex-[2] pl-4">
+              <div key={locale} className="min-w-56 flex-[2] pl-4">
                 <Label className="border-b border-black">{locale}</Label>
               </div>
             ))}
           </div>
-          {[...keys].map((key) => (
-            <div
-              key={key}
-              className="flex flex-row items-center gap-4 border-b  pb-4"
-            >
-              <X
-                className="cursor-pointer"
-                onClick={() => {
-                  const newKeys = new Set(keys);
-                  newKeys.delete(key);
-                  setKeys(newKeys);
-                }}
-              />
-              <Textarea
-                className="min-h-0 min-w-56 flex-1"
-                rows={1}
-                id={key}
-                value={key}
-                readOnly
-              />
 
-              {Object.keys(translations).map((locale) => {
-                const value = translations?.[locale]?.[key];
-                return (
-                  <Textarea
-                    key={`${key}-${locale}`}
-                    className={cn(
-                      "min-h-0 min-w-56 flex-[2]",
-                      value ? "" : "border-2 border-red-500",
-                    )}
-                    rows={1}
-                    value={value ?? ""}
-                    onChange={(e) => {
-                      const newTranslations = { ...translations };
-                      newTranslations[locale]![key] = e.target.value;
-                      setTranslations(newTranslations);
+          {[...keys].map((key) => {
+            const values: string[] = [];
+
+            Object.keys(translations).forEach((locale) => {
+              const value = translations?.[locale]?.[key];
+              if (value) {
+                values.push(value);
+              }
+            });
+            if (
+              onlyMissingValues &&
+              values.length === Object.keys(translations).length
+            ) {
+              return null;
+            }
+
+            return (
+              <div
+                key={key}
+                className="flex flex-row items-center gap-4 border-b  pb-4"
+              >
+                <div className="flex flex-row items-center gap-4">
+                  <X
+                    className="cursor-pointer "
+                    onClick={() => {
+                      const newKeys = new Set(keys);
+                      newKeys.delete(key);
+                      setKeys(newKeys);
                     }}
                   />
-                );
-              })}
-            </div>
-          ))}
+                  <Textarea
+                    className="min-h-0 min-w-56 flex-1"
+                    rows={1}
+                    id={key}
+                    value={key}
+                    readOnly
+                  />
+                </div>
+
+                {Object.keys(translations).map((locale) => {
+                  const value = translations?.[locale]?.[key];
+                  return (
+                    <Textarea
+                      key={`${key}-${locale}`}
+                      className={cn(
+                        "min-h-0 min-w-56 flex-[2]",
+                        value ? "" : "border-2 border-red-500",
+                      )}
+                      rows={1}
+                      value={value ?? ""}
+                      onChange={(e) => {
+                        const newTranslations = { ...translations };
+                        newTranslations[locale]![key] = e.target.value;
+                        setTranslations(newTranslations);
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            );
+          })}
         </div>
       </div>
     </main>

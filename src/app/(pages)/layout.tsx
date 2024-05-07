@@ -1,3 +1,8 @@
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 import { Toaster } from "@/components/ui/sonner";
 import "@/styles/globals.css";
 import { Analytics } from "@vercel/analytics/react";
@@ -23,7 +28,18 @@ export default function RootLayout({
       <body
         className={`font-sans ${inter.variable} flex h-full w-full flex-col items-center`}
       >
-        {children}
+        <div className="w-full overflow-y-scroll">
+          <ResizablePanelGroup
+            direction="horizontal"
+            className="w-full rounded-lg border"
+          >
+            <ResizablePanel defaultSize={200} />
+            <ResizableHandle />
+            <ResizablePanel defaultSize={1200}>{children}</ResizablePanel>
+            <ResizableHandle />
+            <ResizablePanel defaultSize={200} />
+          </ResizablePanelGroup>
+        </div>
         <Toaster richColors closeButton />
         <Analytics />
       </body>
