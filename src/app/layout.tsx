@@ -1,11 +1,11 @@
-import { Toaster } from "@/components/ui/sonner";
-import "@/styles/globals.css";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-
+import { Toaster } from "@/components/ui/sonner";
+import "@/styles/globals.css";
+import { Analytics } from "@vercel/analytics/react";
 import { Inter } from "next/font/google";
 
 const inter = Inter({
@@ -41,6 +41,7 @@ export default function RootLayout({
           </ResizablePanelGroup>
         </div>
         <Toaster richColors closeButton />
+        <Analytics />
       </body>
     </html>
   );
